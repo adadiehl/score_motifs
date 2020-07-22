@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+\#!/usr/bin/perl
 ## score_motifs.pl, version 0.1
 ## Written by Adam Diehl, 02/20/2017
 
@@ -168,7 +168,6 @@ use strict;
 use Getopt::Long;
 use Bio::Seq;
 use Bio::SeqIO;
-use GenericFuncs;
 use threads;
 
 my $sttime = time;
@@ -178,7 +177,7 @@ srand( (time ^ $$ ^ unpack "%32L*", 'ps wwaxl | gzip') );
 #
 # Version
 #
-my $Version = 0.3;
+my $Version = 0.4;
 my $DEBUG   = 0;
 
 
@@ -773,7 +772,7 @@ sub print_pred_line {
 		 $row->[5] ];
     }
     
-    GenericFuncs::print_array($res, "\t", $OUT);
+    print_array($res, "\t", $OUT);
 }
 
 sub dump_results {
@@ -788,6 +787,52 @@ sub dump_results {
 	}
     }
 }
+
+sub print_array {
+    my ($array, $delim, $fh, $term, $nd_char) = @_;
+    # input array, delimiter char, filehandle, terminator char, not-defined char
+    if (!defined($delim)) {
+        $delim = "\t";
+    }
+    if (!defined($term)) {
+        $term = "\n";
+    }
+
+    if (defined($fh)) {
+        select $fh;
+    } else {
+        select STDOUT;
+    }
+
+    for (my $i = 0; $i < $#{$array}; $i++) {
+        if (defined(${$array}[$i])) {
+            print "${$array}[$i]$delim";
+        } else {
+            if (defined($nd_char)) {
+                print "$nd_char$delim";
+            } else {
+                print STDERR "WARNING: Some fields in array not defined with no default. Skipping!\n";
+                next;
+            }
+        }
+    }
+    if (defined(${$array}[$#{$array}])) {
+        print "${$array}[$#{$array}]$term";
+    } else {
+        if (defined($nd_char)) {
+            print "$nd_char$term";
+        } else {
+            print STDERR "WARNING: Some fields in array not defined with no default. Skipping!\n";
+            print "$term";
+        }
+    }
+
+    if (defined($fh)) {
+        select STDOUT;
+    }
+    return 0;
+}
+
 
 1;
 
