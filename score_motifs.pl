@@ -1,4 +1,4 @@
-\#!/usr/bin/perl
+#!/usr/bin/perl
 ## score_motifs.pl, version 0.1
 ## Written by Adam Diehl, 02/20/2017
 
